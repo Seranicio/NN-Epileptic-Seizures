@@ -62,7 +62,12 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 global groupdataset;
 groupdataset = 1;
-
+global userdataset;
+userdataset = 0;
+global FileName;
+global FilePath;
+FileName = "null";
+FilePath = "null";
 
 % --- Outputs from this function are returned to the command line.
 function varargout = GUI_OutputFcn(hObject, eventdata, handles) 
@@ -83,10 +88,15 @@ function groupdataset_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of groupdataset
 set(handles.browsedataset,'Value',0);
+set(handles.groupdataset,'Value',1);
 global groupdataset;
 groupdataset = 1;
 global userdataset;
 userdataset = 0;
+global FileName;
+global FilePath;
+FileName = "null";
+FilePath = "null";
 % disp("user" + userdataset);
 % disp("group" + groupdataset);
 
@@ -97,11 +107,17 @@ function browsedataset_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of browsedataset
+set(handles.browsedataset,'Value',1);
+set(handles.groupdataset,'Value',0);
 global groupdataset;
 groupdataset = 0;
 global userdataset;
 userdataset = 1;
-set(handles.groupdataset,'Value',0);
+global FileName;
+global FilePath;
+[FileName,FilePath]= uigetfile();
+% disp(FileName);
+% disp(FilePath);
 % disp("user" + userdataset);
 % disp("group" + groupdataset);
 
@@ -111,7 +127,12 @@ function BestNN_Callback(hObject, eventdata, handles)
 % hObject    handle to BestNN (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+global userdataset;
+global groupdataset;
+global FileName;
+global FilePath;
+Main(userdataset,groupdataset,FileName,FilePath);
+close;
 
 % --- Executes on button press in runNN1.
 function runNN1_Callback(hObject, eventdata, handles)
