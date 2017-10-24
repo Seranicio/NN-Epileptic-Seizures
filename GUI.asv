@@ -99,6 +99,8 @@ global FileName;
 global FilePath;
 FileName = "null";
 FilePath = "null";
+% disp("user" + userdataset);
+% disp("group" + groupdataset);
 
 % --- Executes on button press in browsedataset.
 function browsedataset_Callback(hObject, eventdata, handles)
@@ -116,6 +118,11 @@ userdataset = 1;
 global FileName;
 global FilePath;
 [FileName,FilePath]= uigetfile();
+% disp(FileName);
+% disp(FilePath);
+% disp("user" + userdataset);
+% disp("group" + groupdataset);
+
 
 % --- Executes on button press in BestNN.
 function BestNN_Callback(hObject, eventdata, handles)
@@ -126,7 +133,6 @@ global userdataset;
 global groupdataset;
 global FileName;
 global FilePath;
-global normalfeed;
 valRatio = get(handles.Validation,'String');
 trainRatio = get(handles.Train,'String');
 testRatio = get(handles.Test,'String');
@@ -134,7 +140,7 @@ valRatio = "" + valRatio;
 trainRatio = "" + trainRatio;
 testRatio = "" + testRatio;
 close;
-Main(userdataset,groupdataset,FileName,FilePath,double(trainRatio),double(testRatio),double(valRatio),normalfeed);
+Main(userdataset,groupdataset,FileName,FilePath,double(trainRatio),double(testRatio),double(valRatio));
 
 
 % --- Executes on button press in runNN1.
@@ -227,10 +233,7 @@ function normalfeed_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of normalfeed
-global normalfeed;
-normalfeed = 1;
-set(handles.recurrent,'Value',0);
-set(handles.normalfeed,'Value',1);
+global normalfeed
 
 % --- Executes on button press in recurrent.
 function recurrent_Callback(hObject, eventdata, handles)
@@ -239,7 +242,3 @@ function recurrent_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of recurrent
-global normalfeed;
-normalfeed = 0;
-set(handles.recurrent,'Value',1);
-set(handles.normalfeed,'Value',0);
