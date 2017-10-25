@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 25-Oct-2017 00:32:21
+% Last Modified by GUIDE v2.5 25-Oct-2017 18:49:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -74,7 +74,9 @@ global nntype;
 nntype = 1;
 global hiddenlayer;
 hiddenlayer = 10;
-disp("This NN Program will use the GPU. Having not suficient memory is possible"); %TODO: divide input.
+global trainingset;
+trainingset = 1;
+disp("This NN Program will use the GPU. Not having suficient memory is possible");
 
 % --- Outputs from this function are returned to the command line.
 function varargout = GUI_OutputFcn(hObject, eventdata, handles) 
@@ -134,6 +136,7 @@ global FilePath;
 global trainingf;
 global nntype;
 global hiddenlayer;
+global trainingset;
 valRatio = get(handles.Validation,'String');
 trainRatio = get(handles.Train,'String');
 testRatio = get(handles.Test,'String');
@@ -141,7 +144,7 @@ valRatio = "" + valRatio;
 trainRatio = "" + trainRatio;
 testRatio = "" + testRatio;
 close;
-Main(FileName,FilePath,double(trainRatio),double(testRatio),double(valRatio),nntype,trainingf,hiddenlayer);
+Main(FileName,FilePath,double(trainRatio),double(testRatio),double(valRatio),nntype,trainingf,hiddenlayer,trainingset);
 
 
 % --- Executes on button press in runNN1.
@@ -323,6 +326,30 @@ end
 % --- Executes during object creation, after setting all properties.
 function hiddenlayer_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to hiddenlayer (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in trainingset.
+function trainingset_Callback(hObject, eventdata, handles)
+% hObject    handle to trainingset (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns trainingset contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from trainingset
+global trainingset;
+trainingset = get(handles.trainingset,'Value');
+
+% --- Executes during object creation, after setting all properties.
+function trainingset_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to trainingset (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

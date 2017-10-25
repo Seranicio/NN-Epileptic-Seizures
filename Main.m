@@ -1,4 +1,4 @@
-function Main(FileName,FilePath,trainRatio,testRatio,valRatio,NNtype,trainf,hiddenlayer)
+function Main(FileName,FilePath,trainRatio,testRatio,valRatio,NNtype,trainf,hiddenlayer,trainingset)
 
 % disp("userdata: " + userdataset);
 % disp("groupdata: " + groupdataset);
@@ -15,28 +15,37 @@ else
 end
 
 
-%Handle data for training.
+%Handle data for training. %TODO Other dataset.
 %Loading Dataset;
 if(FileName == "null")
    A = load('Dataset\44202.mat');
    P = A.FeatVectSel;
-   P = P.';
    T = A.Trg;
 %  B = load('Dataset\63502.mat');
 else
    C = load(fullfile(FilePath, FileName));
    P = C.FeatVectSel;
-   P = P.';
    T = C.Trg;
 end
 
 %Handle Target output for Classes.
-T = handleTarget(T);
+if(trainingset == 1)
+    %getting best entropy -> number of all classes are equal.
+    [P,T] = EqualNumberClasses(P,T);
+else
+    %Raw data if wanna test. It's not recommended because the objective of the
+    %project is to have a NN to detect Pre-Ictals , Ictals. The result will be
+    %a incredible NN for detecting normal brain state (interictal).
+    T = handleTarget(T);
+end
+
+%Transpose Input and Target.
 T = T.';
+P = P.';
 
 %Creating NN
 if(NNtype == 1) % normal feedfoward NN
-    disp("Setting up Normal Feed Network! Please wait a few seconds to begin training...");
+    disp("Setting up Normal Feed Network! Please wait a few seconds to train...");
     net = feedforwardnet(hiddenlayer);
     net.trainParam.epochs = 1000;
     net.divideParam.trainRatio=trainRatio/100;
@@ -44,22 +53,17 @@ if(NNtype == 1) % normal feedfoward NN
     net.divideParam.valRatio=valRatio/100;
     net.trainFcn = trainfunction;
     net = train(net,P,T, 'useGPU', 'yes');
-%     outSim = sim(net,Test);
-%     [sensi, speci, PreicPerc, IctalPerc] = calcPerform(outSim, TT);
 elseif(NNtype == 2) %Recurrent NN
-    disp("Setting up recurrent Network! Please wait a few seconds to begin training...");
+    disp("Setting up recurrent Network! Please wait a few seconds to train...");
     net = layrecnet(1:2, hiddenlayer);
-    view(net)
     net.trainParam.epochs = 1000;
     net.divideParam.trainRatio=trainRatio/100;
     net.divideParam.testRatio=testRatio/100;
     net.divideParam.valRatio=valRatio/100;
     net.trainFcn = trainfunction;
     net = train(net,P,T, 'useGPU', 'yes');
-%     outSim = sim(net,Test);
-%     [sensi, speci] = calcPerform(outSim, TT);
 else %Elman feedforward NN (it's a recurrent NN with the addition of layer recurrent connections with tap delays
-    disp("Setting up Elman Network! Please wait a few seconds to begin training...");
+    disp("Setting up Elman Network! Please wait a few seconds to train...");
     net = elmannet(1:2, hiddenlayer);
     net.trainParam.epochs = 1000;
     net.divideParam.trainRatio=trainRatio/100;
@@ -68,6 +72,12 @@ else %Elman feedforward NN (it's a recurrent NN with the addition of layer recur
     net.trainFcn = trainfunction;
     net = train(net,P,T, 'useGPU', 'yes');
 end
+
+%Testing with Raw Dataset
+
+A = load('Dataset\44202.mat');
+outSim = sim(net,A.FeatVectSel.');
+% [sensi, speci, PreicPerc, IctalPerc, AC] = calcPerform(outSim, T);
 
 save nn_test.mat
 
