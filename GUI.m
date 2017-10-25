@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 24-Oct-2017 22:41:39
+% Last Modified by GUIDE v2.5 25-Oct-2017 00:32:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -68,8 +68,13 @@ global FileName;
 global FilePath;
 FileName = "null";
 FilePath = "null";
-global normalfeed;
-normalfeed = 1;
+global trainingf;
+trainingf = 1;
+global nntype;
+nntype = 1;
+global hiddenlayer;
+hiddenlayer = 10;
+disp("This NN Program will use the GPU. Having not suficient memory is possible"); %TODO: divide input.
 
 % --- Outputs from this function are returned to the command line.
 function varargout = GUI_OutputFcn(hObject, eventdata, handles) 
@@ -126,7 +131,9 @@ global userdataset;
 global groupdataset;
 global FileName;
 global FilePath;
-global normalfeed;
+global trainingf;
+global nntype;
+global hiddenlayer;
 valRatio = get(handles.Validation,'String');
 trainRatio = get(handles.Train,'String');
 testRatio = get(handles.Test,'String');
@@ -134,7 +141,7 @@ valRatio = "" + valRatio;
 trainRatio = "" + trainRatio;
 testRatio = "" + testRatio;
 close;
-Main(userdataset,groupdataset,FileName,FilePath,double(trainRatio),double(testRatio),double(valRatio),normalfeed);
+Main(FileName,FilePath,double(trainRatio),double(testRatio),double(valRatio),nntype,trainingf,hiddenlayer);
 
 
 % --- Executes on button press in runNN1.
@@ -243,3 +250,84 @@ global normalfeed;
 normalfeed = 0;
 set(handles.recurrent,'Value',1);
 set(handles.normalfeed,'Value',0);
+
+
+% --- Executes on selection change in trainingfunction.
+function trainingfunction_Callback(hObject, eventdata, handles)
+% hObject    handle to trainingfunction (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns trainingfunction contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from trainingfunction
+global trainingf;
+trainingf = get(handles.trainingfunction,'Value');
+
+% --- Executes during object creation, after setting all properties.
+function trainingfunction_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to trainingfunction (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in nntype.
+function nntype_Callback(hObject, eventdata, handles)
+% hObject    handle to nntype (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns nntype contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from nntype
+global nntype;
+nntype = get(handles.nntype,'Value');
+
+% --- Executes during object creation, after setting all properties.
+function nntype_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to nntype (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in hiddenlayer.
+function hiddenlayer_Callback(hObject, eventdata, handles)
+% hObject    handle to hiddenlayer (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns hiddenlayer contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from hiddenlayer
+global hiddenlayer;
+hiddenlayer = get(handles.hiddenlayer,'Value');
+if(hiddenlayer == 1)
+    hiddenlayer = 10;
+elseif(hiddenlayer == 2)
+    hiddenlayer = 20;
+elseif(hiddenlayer == 3)
+    hiddenlayer = 29;
+else
+    hiddenlayer = 30;
+end
+
+% --- Executes during object creation, after setting all properties.
+function hiddenlayer_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to hiddenlayer (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

@@ -1,12 +1,21 @@
-function Main(userdataset,groupdataset,FileName,FilePath,trainRatio,testRatio,valRatio,NNtype)
+function Main(FileName,FilePath,trainRatio,testRatio,valRatio,NNtype,trainf,hiddenlayer)
 
 % disp("userdata: " + userdataset);
 % disp("groupdata: " + groupdataset);
 % disp("Filename:" + FileName);
 % disp("FIlePath:" + FilePath);
 
-%Handle data for training.
+% 1 - traincgp | 2 - trainscg | 3- traincgb
+if(trainf == 1)
+    trainfunction = 'traincgp';
+elseif(trainf == 2)
+    trainfunction = 'trainscg';
+else
+    trainfunction = 'traincgb';
+end
 
+
+%Handle data for training.
 %Loading Dataset;
 if(FileName == "null")
    A = load('Dataset\44202.mat');
@@ -26,33 +35,43 @@ T = handleTarget(T);
 T = T.';
 
 %Creating NN
-% net = layrecnet(1:2, 29); %https://www.mathworks.com/help/nnet/ref/layrecnet.html
-% net.trainFcn = 'trainscg';
-if(NNtype == 1) % normal feed 
-    disp("normal");
-    net = feedforwardnet(29,'trainscg');
-    net = configure(net,P,T);
+if(NNtype == 1) % normal feedfoward NN
+    disp("Setting up Normal Feed Network! Please wait a few seconds to begin training...");
+    net = feedforwardnet(hiddenlayer);
     net.trainParam.epochs = 1000;
-    net.trainParam.goal = 0.00001;
     net.divideParam.trainRatio=trainRatio/100;
     net.divideParam.testRatio=testRatio/100;
     net.divideParam.valRatio=valRatio/100;
+    net.trainFcn = trainfunction;
     net = train(net,P,T, 'useGPU', 'yes');
 %     outSim = sim(net,Test);
 %     [sensi, speci, PreicPerc, IctalPerc] = calcPerform(outSim, TT);
-else
-    net = layrecnet(1:2, 29);
-    net.trainFcn = 'trainscg';
+elseif(NNtype == 2) %Recurrent NN
+    disp("Setting up recurrent Network! Please wait a few seconds to begin training...");
+    net = layrecnet(1:2, hiddenlayer);
+    view(net)
     net.trainParam.epochs = 1000;
     net.divideParam.trainRatio=trainRatio/100;
     net.divideParam.testRatio=testRatio/100;
     net.divideParam.valRatio=valRatio/100;
+    net.trainFcn = trainfunction;
     net = train(net,P,T, 'useGPU', 'yes');
 %     outSim = sim(net,Test);
 %     [sensi, speci] = calcPerform(outSim, TT);
+else %Elman feedforward NN (it's a recurrent NN with the addition of layer recurrent connections with tap delays
+    disp("Setting up Elman Network! Please wait a few seconds to begin training...");
+    net = elmannet(1:2, hiddenlayer);
+    net.trainParam.epochs = 1000;
+    net.divideParam.trainRatio=trainRatio/100;
+    net.divideParam.testRatio=testRatio/100;
+    net.divideParam.valRatio=valRatio/100;
+    net.trainFcn = trainfunction;
+    net = train(net,P,T, 'useGPU', 'yes');
 end
 
 save nn_test.mat
+
+
 
 %TODO: Sensitivity e Specifity
 
