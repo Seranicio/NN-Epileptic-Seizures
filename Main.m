@@ -77,7 +77,7 @@ end
 
 A = load('Dataset\44202.mat');
 outSim = sim(net,A.FeatVectSel.');
-% [sensi, speci, PreicPerc, IctalPerc, AC] = calcPerform(outSim, T);
+Performance(outSim,T);
 
 save nn_test.mat
 
