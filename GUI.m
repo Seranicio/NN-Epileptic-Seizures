@@ -76,7 +76,7 @@ global hiddenlayer;
 hiddenlayer = 10;
 global trainingset;
 trainingset = 1;
-disp("This NN Program will use the GPU. Not having suficient memory is possible");
+disp("This NN Program will use the GPU. Not having suficient memory for RawDataset is possible");
 
 % --- Outputs from this function are returned to the command line.
 function varargout = GUI_OutputFcn(hObject, eventdata, handles) 
