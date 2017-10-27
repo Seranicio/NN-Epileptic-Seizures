@@ -19,14 +19,14 @@ if(FileName == "null")
    A = load('Dataset\44202.mat');
    P = A.FeatVectSel;
    T = A.Trg;
-%  B = load('Dataset\63502.mat');
 else
    C = load(fullfile(FilePath, FileName));
    P = C.FeatVectSel;
    T = C.Trg;
 end
 
-rawT = handleTarget(T); %Raw target dataset.
+rawP = P.';
+rawT = RawTarget(T); %Raw target dataset.
 rawT = rawT.';
 
 %Handle Target output for Classes.
@@ -37,7 +37,7 @@ else
     %Raw data if wanna test. It's not recommended because the objective of the
     %project is to have a NN to detect Pre-Ictals , Ictals. The result will be
     %a incredible NN for detecting normal brain state (interictal).
-    rawT = handleTarget(T);
+    T = RawTarget(T);
 end
 
 %Transpose Input and Target.
@@ -78,9 +78,7 @@ else %Elman feedforward NN (it's a recurrent NN with the addition of layer recur
 end
 
 %Testing with Raw Dataset
-
-A = load('Dataset\44202.mat');
-outSim = sim(net,A.FeatVectSel.');
+outSim = sim(net,rawP);
 [Sensivity,Specificity,Preictal_accuracy,Ictal_accuracy,Accuracy] = Performance(outSim,rawT);
 
 %setting global variable for ResultsGUI... (only way i know how to send
