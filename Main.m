@@ -3,6 +3,7 @@ function Main(FileName,FilePath,trainRatio,testRatio,valRatio,NNtype,trainf,hidd
 %Filename for net and results saving.
 saveName = "TrainedNN\";
 
+
 % 1 - traincgp | 2 - trainscg | 3- traincgb
 if(trainf == 1)
     trainfunction = 'traincgp';
@@ -16,7 +17,7 @@ end
 %Handle data for training. %TODO Other dataset.
 %Loading Dataset;
 if(FileName == "null")
-   A = load('Dataset\44202.mat');
+   A = load('Dataset\63502.mat');
    P = A.FeatVectSel;
    T = A.Trg;
 else

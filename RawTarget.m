@@ -42,3 +42,5 @@ for i=1:length(beginning_ictal)
     finalTarget(beginning_ictal(i):final_ictal(i),3) = 1;
     finalTarget(beginning_ictal(i):final_ictal(i),1) = 0;
 end
+
+% disp("MED: " + sum(final_ictal - beginning_ictal)/length(beginning_ictal) + "MAX :" + max(final_ictal - beginning_ictal) + "MIN :" + min(final_ictal - beginning_ictal));
