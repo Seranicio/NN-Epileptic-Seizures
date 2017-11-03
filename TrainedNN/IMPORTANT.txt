@@ -1,0 +1,6 @@
+This Best Neural Networks are not great for every patient. The possible reason why is that the seizure type can be diferent for every patient, so training a Neural Network to prevent and detect a patient seizure knowing that this person have not the same type of seizures as the trained NN can be suck.
+
+This was a Interesting Assignment by Universidade de Coimbra.
+
+Serafim Barroca.
+Pedro Ferreira.

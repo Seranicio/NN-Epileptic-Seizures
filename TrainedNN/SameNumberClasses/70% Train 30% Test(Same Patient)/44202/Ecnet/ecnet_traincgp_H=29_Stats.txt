@@ -1,0 +1,5 @@
+Sensitivity: 97%
+Specificity: 55%
+Pre-Ictals Accuracy: 75%
+Ictals Accuracy: 73%
+Accuracy: 3%
