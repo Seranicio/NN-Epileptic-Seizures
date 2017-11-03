@@ -3,6 +3,10 @@ function Main(FileName,FilePath,trainRatio,testRatio,valRatio,NNtype,trainf,hidd
 %Filename for net and results saving.
 saveName = "TrainedNN\";
 
+if( (trainRatio + testRatio) ~= 100 )
+    disp('Training values are not valid. Exiting...');
+    return
+end
 
 % 1 - traincgp | 2 - trainscg | 3- traincgb
 if(trainf == 1)
@@ -17,7 +21,9 @@ end
 %Handle data for training. %TODO Other dataset.
 %Loading Dataset;
 if(FileName == "null")
-   A = load('Dataset\63502.mat');
+   A = load('Dataset\44202.mat');
+   %44202
+   %63502
    P = A.FeatVectSel;
    T = A.Trg;
 else
@@ -34,11 +40,27 @@ rawT = rawT.';
 if(trainingset == 1)
     %getting best entropy -> number of all classes are equal.
     [P,T] = EqualNumberClasses(P,T);
+elseif (trainingset == 2)
+    %Handler:
+    %300 points Interictal for each Ictal phase.
+    %600 points PreIctal for each Ictal phase.
+    %Normal Ictal points.
+    %300 points Post-Ictal for each Ictal phase
+    [P,T] = LowInterIctalPoints(P,T);
 else
     %Raw data if wanna test. It's not recommended because the objective of the
     %project is to have a NN to detect Pre-Ictals , Ictals. The result will be
     %a incredible NN for detecting normal brain state (interictal).
     T = RawTarget(T);
+end
+
+%if training method is not with 100% we have to divide it.
+if(trainRatio ~= 100)
+    [InputTrainingSet,TargetTrainingSet,InputTestingSet,TargetTestingSet] = DivideTestingRatio(P,T,trainRatio,testRatio); 
+    InputTrainingSet=InputTrainingSet.';
+    TargetTrainingSet = TargetTrainingSet.';
+    InputTestingSet = InputTestingSet.';
+    TargetTestingSet = TargetTestingSet.';
 end
 
 %Transpose Input and Target.
@@ -55,7 +77,11 @@ if(NNtype == 1) % normal feedfoward NN
     net.divideParam.testRatio=testRatio/100;
     net.divideParam.valRatio=valRatio/100;
     net.trainFcn = trainfunction;
-    net = train(net,P,T, 'useGPU', 'yes');
+    if(trainRatio ~= 100)
+        net = train(net,InputTrainingSet,TargetTrainingSet, 'useGPU', 'yes');
+    else
+        net = train(net,P,T, 'useGPU', 'yes');
+    end
 elseif(NNtype == 2) %Recurrent NN
     disp("Setting up recurrent Network! Please wait a few seconds to train...");
     net = layrecnet(1:2, hiddenlayer);
@@ -65,7 +91,11 @@ elseif(NNtype == 2) %Recurrent NN
     net.divideParam.testRatio=testRatio/100;
     net.divideParam.valRatio=valRatio/100;
     net.trainFcn = trainfunction;
-    net = train(net,P,T, 'useGPU', 'yes');
+    if(trainRatio ~= 100)
+        net = train(net,InputTrainingSet,TargetTrainingSet, 'useGPU', 'yes');
+    else
+        net = train(net,P,T, 'useGPU', 'yes');
+    end
 else %Elman feedforward NN (it's a recurrent NN with the addition of layer recurrent connections with tap delays
     disp("Setting up Elman Network! Please wait a few seconds to train...");
     net = elmannet(1:2, hiddenlayer);
@@ -75,12 +105,21 @@ else %Elman feedforward NN (it's a recurrent NN with the addition of layer recur
     net.divideParam.testRatio=testRatio/100;
     net.divideParam.valRatio=valRatio/100;
     net.trainFcn = trainfunction;
-    net = train(net,P,T, 'useGPU', 'yes');
+    if(trainRatio ~= 100)
+        net = train(net,InputTrainingSet,TargetTrainingSet, 'useGPU', 'yes');
+    else
+        net = train(net,P,T, 'useGPU', 'yes');
+    end
 end
 
 %Testing with Raw Dataset
-outSim = sim(net,rawP);
-[Sensivity,Specificity,Preictal_accuracy,Ictal_accuracy,Accuracy] = Performance(outSim,rawT);
+if(trainRatio ~= 100)
+    outSim = sim(net,InputTestingSet);
+    [Sensivity,Specificity,Preictal_accuracy,Ictal_accuracy,Accuracy] = Performance(outSim,TargetTestingSet);
+else
+    outSim = sim(net,rawP);
+    [Sensivity,Specificity,Preictal_accuracy,Ictal_accuracy,Accuracy] = Performance(outSim,rawT);
+end
 
 %setting global variable for ResultsGUI... (only way i know how to send
 %results there).

@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 25-Oct-2017 18:49:37
+% Last Modified by GUIDE v2.5 03-Nov-2017 21:15:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -223,12 +223,12 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
+% --- Executes on button press in bestIctal.
+function bestIctal_Callback(hObject, eventdata, handles)
+% hObject    handle to bestIctal (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+RunBestNN('C:\Users\Vian\Documents\MATLAB\Assignment 3\TrainedNN','bestIctal.mat');
 
 % --- Executes on button press in normalfeed.
 function normalfeed_Callback(hObject, eventdata, handles)
@@ -358,3 +358,18 @@ function trainingset_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in bestpreictal.
+function bestpreictal_Callback(hObject, eventdata, handles)
+% hObject    handle to bestpreictal (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+RunBestNN('C:\Users\Vian\Documents\MATLAB\Assignment 3\TrainedNN','bestPreIctal.mat');
+
+% --- Executes on button press in bestictalandpre.
+function bestictalandpre_Callback(hObject, eventdata, handles)
+% hObject    handle to bestictalandpre (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+RunBestNN('C:\Users\Vian\Documents\MATLAB\Assignment 3\TrainedNN','bestIctalandPre.mat');
